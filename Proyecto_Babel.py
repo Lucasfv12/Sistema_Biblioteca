@@ -47,5 +47,15 @@ def ver_prestamos():
         for fila in filas:
             print(fila)
             
-ver_prestamos()
-    
+
+def ver_vencidos():
+        hoy = datetime.today().date()
+        with sqlite3.connect(DB) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                        SELECT * FROM prestamos WHERE devueltos='no'""")
+            filas = cursor.fetchall()
+            for f in filas:
+                devolucion = datetime.strftime(f[6], "%Y-%m-%d").date()
+                if devolucion < hoy:
+                    print(f"⚠️ Vencido: {f}")
